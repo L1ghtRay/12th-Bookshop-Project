@@ -23,36 +23,46 @@ def create():
         cu.execute('create table stocks (SlNo int primary key not null, Name varchar(40) not null, Author varchar(30) not null, Pub varchar(30), Qty int, Price int)')
 
 def gui():
-    print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+    print('\n'*50)
     print(pyfiglet.figlet_format('BookShop','doom')+'====================================\n')
     print("1) Add a Book\n2) Display Books\n3) Change Book Details\n4) Delete a Book\n\n+-------------------------------+\n| '-Menu-' -> Back to Main Menu |\n| '-Close-' -> Exit the Program |\n+-------------------------------+\n\n====================================\n")
     x = inp('Enter corresponding Action Number : ','int',True)
     if x==1:
-        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+        print('\n'*50)
         print('---------------------------------------------------------\n'+pyfiglet.figlet_format('Book Insertion','small')+'---------------------------------------------------------\n')
         insert()
     elif x==2:
-        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+        print('\n'*50)
         print('------------------------------------------------------\n'+pyfiglet.figlet_format('Book Display','small')+'------------------------------------------------------')
-        print("\n1) 'All' Stocks\n2) 'Specific' Criteria of Stocks\n")
-        y = inp(': ','aoc')
+        print("\n1) All Stocks\n2) Specific Criteria of Stocks\n")
+        y = inp(': ','1o2')
         display(y)
     elif x==3:
-        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+        print('\n'*50)
         print('------------------------------------------------------\n'+pyfiglet.figlet_format('Book Updation','small')+'------------------------------------------------------')
-        print("\n1) 'Single' Updation\n2) 'Group' Updation\n")
-        y = inp(': ','sog')
+        print("\n1) Single Updation\n2) Group Updation\n")
+        y = inp(': ','1o2')
         update(y)
     elif x==4:
-        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+        print('\n'*50)
         print('------------------------------------------------------\n'+pyfiglet.figlet_format('Book Removal','small')+'------------------------------------------------------')
-        print("\n1) 'Single' Removal\n2) 'Group' Removal\n")
-        y = inp(': ','sog')
+        print("\n1) Single Removal\n2) Group Removal\n")
+        y = inp(': ','1o2')
         remove(y)
 
 def insert():
     while True:
-        a = inp('Enter Serial No. : ','int',True)
+        cu.execute('Select SlNo from stocks')
+        sl = cu.fetchall()
+        while True:
+            isBreak = True
+            a = inp('Enter Serial No. : ','int',True)
+            for i in sl:
+                if a==i[0]:
+                    print('Error! Duplicate SlNo. Try Again.\n')
+                    isBreak = False
+            if isBreak==True:
+                break
         b = inp('Enter Book Title : ','str',True)
         c = inp('Enter Author : ','str',True)
         d = inp('Enter Publisher Name : ','str',False,True)
@@ -71,7 +81,7 @@ def insert():
                 co.commit()
                 gui()
             except mysql.connector.errors.IntegrityError:
-                print('Error! Duplicate ID. Try Again.\n\n')
+                print('Error! Duplicate Slno. Try Again.\n\n')
                 continue
         else:
             print('\n')
@@ -105,17 +115,26 @@ def update(x):
     if x==False:
         print('\n'+str(pyfiglet.figlet_format('Single Updation','small')))
         while True:
-            y = inp('Enter SlNo of Book : ','int',True)
+            cu.execute('Select SlNo from stocks')
+            sl = cu.fetchall()
+            isBreak = False
+            while isBreak==False:
+                y = inp('Enter SlNo of Book : ','int',True)
+                for i in sl:
+                    if y==i[0]:
+                        isBreak = True
+                if isBreak==False:
+                    print('Error! Incorrect Slno. Try Again.\n')
             cu.execute('Select * from stocks where SlNo='+str(y))
             out = cu.fetchall()
             print()
-            values = table(out)
+            table(out)
             print()
             c,d = 0,-1
             while True:
                 z = inp('Enter Column Name : ','char',True)
                 for i in cu.description:
-                    if i[0]==z:
+                    if i[0].lower()==z.lower():
                         d = c
                     c += 1
                 if d==-1:
@@ -123,14 +142,11 @@ def update(x):
                     continue
                 break
             a = inp('Enter New Value : ','str',False,True)
-            values[0][d] = a
             print()
-            print('\nPreview\n-------')
-            print(values[0][0],'|',values[0][1],'|',values[0][2],'|',values[0][3],'|',values[0][4],'|',values[0][5])
-            b = inp('\nConfirm Updation : ','yn')
+            b = inp('Confirm Updation : ','yn')
             if b==True:
                 try:
-                    cu.execute('Update stocks set '+z+' = "'+a+'" where SlNo='+str(y))
+                    cu.execute('Update stocks set '+z+' = '+a+' where SlNo='+str(y))
                     co.commit()
                     gui()
                 except mysql.connector.errors.ProgrammingError:
@@ -150,7 +166,7 @@ def update(x):
             while True:
                 z = inp('Enter Column Name : ','char',True)
                 for i in cu.description:
-                    if i[0]==z:
+                    if i[0].lower()==z.lower():
                         d = c
                     c += 1
                 if d==-1:
@@ -162,13 +178,8 @@ def update(x):
             f = inp('\nConfirm Updation : ','yn')
             if f==True:
                 try:
-                    cu.execute('Update stocks set '+z+' = "'+b+'" '+a)
+                    cu.execute('Update stocks set '+z+' = '+b+' '+a)
                     co.commit()
-                    cu.execute('Select * from stocks')
-                    out = cu.fetchall()
-                    print()
-                    table(out)
-                    y = inp('\nContinue : ','str')
                     gui()
                 except mysql.connector.errors.ProgrammingError:
                     print('Error! Incorrect Column Name or Syntax. Try Again.\n')
@@ -190,13 +201,11 @@ def remove(x):
                     if y==i[0]:
                         isBreak = True
                 if isBreak==False:
-                    print('Error! Incorrect Column Name or Syntax. Try Again.\n')
+                    print('Error! Incorrect Slno. Try Again.\n')
             cu.execute('Select * from stocks where SlNo='+str(y))
             out = cu.fetchall()
             print()
-            values = table(out)
-            print('\nPreview\n-------')
-            print(values[0][0],'|',values[0][1],'|',values[0][2],'|',values[0][3],'|',values[0][4],'|',values[0][5])
+            table(out)
             a = inp('\nConfirm Removal : ','yn')
             if a==True:
                 try:
@@ -244,12 +253,7 @@ def isfloat(num):
 def inp(x,y,z=False,w=False):
     while True:
         a = input(x)
-        if z==True and a=='':
-            print('Error! Value cant be blank. Try Again.\n')
-            continue
-        elif w==True and a=='':
-            return 'NULL'
-        elif a.lower()=='wew' or a.lower()=='ewe':
+        if a.lower()=='wew' or a.lower()=='ewe':
             subprocess.call([sys.executable, os.path.realpath(__file__)] + sys.argv[1:])
         elif a.lower()=='-menu-':
             gui()
@@ -257,6 +261,20 @@ def inp(x,y,z=False,w=False):
             sys.exit()
         elif a.lower()=='-test-':
             test()
+        elif z==True and a=='':
+            print('Error! Value cant be blank. Try Again.\n')
+            continue
+        elif w==True and a=='':
+            return 'NULL'
+        elif w==True and a!='':
+            if a.isdigit():
+                return str(a)
+            elif a.lower().startswith(('qty','price')) and (s in a for s in ('+','-','*','/')):
+                return str(a)
+            elif a.lower().startswith(('slno','name','author','pub')) and (s in a for s in ('+','-','*','/')):
+                print('Error! Invalid Input. Try Again.\n')
+            else:
+                return '"'+str(a)+'"'
         elif y=='yn':
             if a.lower()=='y':
                 return True
@@ -265,13 +283,8 @@ def inp(x,y,z=False,w=False):
             else:
                 print('Error! Invalid Input. Try Again.')
                 continue
-        elif (a.lower()=='all' or a.lower()=='1' or a.lower()=='specific' or a.lower()=='2') and y=='aoc':
-            if a.lower()=='all' or a=='1':
-                return False
-            else:
-                return True
-        elif (a.lower()=='single' or a.lower()=='1' or a.lower()=='group' or a.lower()=='2') and y=='sog':
-            if a.lower()=='single' or a=='1':
+        elif (a=='1' or a=='2') and y=='1o2':
+            if a=='1':
                 return False
             else:
                 return True
