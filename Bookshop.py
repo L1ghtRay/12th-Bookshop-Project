@@ -201,8 +201,6 @@ def inp(x,y,z=False,w=False):
             gui()
         elif a.lower()=='-close-':
             sys.exit()
-        elif a.lower()=='-test-':
-            test()
         elif a.lower()=='-cts-':
             try:
                 b = input('\nEnter Custom Command : ')
@@ -267,16 +265,6 @@ def inp(x,y,z=False,w=False):
             return str(a)
         else:
             print('Error! Invalid Input. Try Again.\n')
-
-def test():
-    cu.execute('Drop table stocks')
-    cu.execute('Create table stocks (SlNo int primary key not null, Name varchar(40) not null, Author varchar(30) not null, Pub varchar(30), Qty int, Price float)')
-    dml('Insert into stocks values (101,"Harry Potter and the Sorcerer\'s Stone","J. K. Rowling","Bloomsbury Publishing",100,299.5)')
-    dml('Insert into stocks values (102,"Charlie and the Chocolate Factory","Roald Dahl","Puffin Books",50,399.00)')
-    dml('Insert into stocks values (103,"Percy Jackson and the Lightning Thief","Rick Riordan","Puffin Books",75,299.00)')
-    dml('Insert into stocks values (104,"A Christmas Carol","Charles Dickens","Chapman & Hall",50,99.5)')
-    dml('Insert into stocks values (105,"David Copperfield","Charles Dickens","Bradbury & Evans",50,199.0)')
-    gui()
 
 def table(x,y=[]):
     global cu
