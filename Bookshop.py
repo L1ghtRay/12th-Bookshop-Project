@@ -203,7 +203,7 @@ def inp(x,y,z=False,w=False):
             sys.exit()
         elif a.lower()=='-cts-':
             try:
-                b = input('\nEnter Custom Command : ')
+                b = inp('\nEnter Custom Command (use " instead of \' ) : ','str')
                 c = dml(b)
                 if c!=None:
                     print()
@@ -330,7 +330,7 @@ def columnmatch(*x):
             if i[0].lower()==z.lower():
                 d = c
             c += 1
-        if d==-1 or ((z.lower()==s for s in x) and x!=()):
+        if d==-1 or any(z.lower()==i for i in x):
             print('Error! Unknown Column Name. Try Again.\n')
             continue
         break
