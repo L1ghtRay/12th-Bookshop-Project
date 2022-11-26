@@ -218,7 +218,7 @@ def inp(x,y,z=False,w=False):
             continue
         elif (w=='name' or w=='pub') and a.isdigit()==False:
             return '"'+str(a)+'"'
-        elif w=='author' and a.isalpha():
+        elif w=='author' and any(chr.isdigit() for chr in a)!=True:
             return '"'+str(a)+'"'
         elif (w=='qty' or w=='price') and a.isdigit():
             if w=='price':
@@ -237,7 +237,7 @@ def inp(x,y,z=False,w=False):
                 return float(a)
             elif a.isdigit() and y=='int':
                 return int(a)
-            elif (a.isdigit()==False and (y=='int' or y=='float')) or (a.isdigit()==True and y=='str') or (a.isalpha()==False and y=='char'):
+            elif (a.isdigit()==False and (y=='int' or y=='float')) or (a.isdigit()==True and y=='str') or (any(chr.isdigit() for chr in a) and y=='char'):
                 print('Error! Invalid Input. Try Again.\n')
                 continue
             else:
