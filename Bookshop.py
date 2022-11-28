@@ -4,9 +4,7 @@ import sys
 from tabulate import tabulate
 import os
 
-paswd = input('Enter MySQL password : ')
-
-co = mysql.connector.connect(host='localhost',user='root',password=paswd)
+co = mysql.connector.connect(host='localhost',user='root',password='123456')
 cu = co.cursor(buffered=True)
 
 def create():
