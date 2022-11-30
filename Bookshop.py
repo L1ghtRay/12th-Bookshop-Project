@@ -336,5 +336,3 @@ def columnmatch(*x):
 
 create()
 gui()
-
-co.close()
