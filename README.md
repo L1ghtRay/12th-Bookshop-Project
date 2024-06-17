@@ -1,3 +1,3 @@
-# CSProject
+# My 12th Grade Bookshop Database Project
 
-THis is the public github for a bunch of CS Projects
+Stock Management Database for a Bookshop
